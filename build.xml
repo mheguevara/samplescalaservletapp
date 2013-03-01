@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<project name="scalasamplewebapp" default="make" basedir=".">
+
+    <property name="srcdir" value="${basedir}/src"/>
+    <property name="libdir" value="${basedir}/lib"/>
+    <property name="builddir" value="${basedir}/build"/>
+    <property name="distdir" value="${basedir}/dist"/>
+    <property name="warfile" value="${distdir}/scalasamplewebapp.war"/>
+    <property name="webdir" value="${basedir}/web"/>
+    <property name="webinfdir" value="${webdir}/WEB-INF"/>
+
+    <path id="build.classpath">
+        <fileset dir="${libdir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <taskdef resource="scala/tools/ant/antlib.xml">
+        <classpath>
+            <pathelement location="${libdir}/scala-library.jar"/>
+            <pathelement location="${libdir}/scala-compiler.jar"/>
+            <pathelement location="${libdir}/scala-reflect.jar"/>
+        </classpath>
+    </taskdef>
+
+    <target name="clean">
+        <delete dir="${builddir}"/>
+        <delete dir="${distdir}"/>
+    </target>
+
+    <target name="make">
+
+        <delete dir="${builddir}"/>
+        <mkdir dir="${builddir}"/>
+        <delete dir="${distdir}"/>
+        <mkdir dir="${distdir}"/>
+        <scalac srcdir="${srcdir}" destdir="${builddir}" classpathref="build.classpath">
+            <include name="**/*.scala"/>
+        </scalac>
+        <javac srcdir="${srcdir}"
+               destdir="${builddir}"
+               classpathref="build.classpath"
+               debug="true"
+               debuglevel="lines,var,source"
+               target="1.6"
+               verbose="yes"/>
+        <war destfile="${warfile}" webxml="${webinfdir}/web.xml">
+            <lib dir="${libdir}"/>
+            <classes dir="${builddir}"/>
+            <webinf dir="${webinfdir}"/>
+        </war>
+
+    </target>
+
+</project>
+
